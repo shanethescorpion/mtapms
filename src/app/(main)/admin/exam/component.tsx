@@ -131,7 +131,18 @@ export default function ExamPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
-      if (!!data) {
+      if (!data || Number.parseInt(data.academicYear) > (new Date()).getFullYear()) {
+        const url2 = new URL('/api/schedule/selected', window.location.origin)
+        const response2 = await fetch(url2)
+        if (response2.ok) {
+          const { data: d } = await response2.json()
+          if (!!d) {
+            setSchoolYear(d)
+          } else {
+            setSchoolYear((new Date()).getFullYear())
+          }
+        }
+      } else {
         setSchoolYear(data.academicYear)
       }
     }

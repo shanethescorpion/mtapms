@@ -39,7 +39,20 @@ export default function DocumentRequirementsPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data: d } = await response.json()
-      setSYData(d)
+      if (!d || Number.parseInt(d.academicYear) > (new Date()).getFullYear()) {
+        const url2 = new URL('/api/schedule/selected', window.location.origin)
+        url2.searchParams.append('action', 'documents')
+        url2.searchParams.append("sy", (new Date()).getFullYear().toString())
+        const response2 = await fetch(url2)
+        if (response2.ok) {
+          const { data: dd } = await response2.json()
+          setSYData(dd)
+          setLoading(false)
+          return dd.academicYear
+        }
+      } else {
+        setSYData(d)
+      }
       setLoading(false)
       return d.academicYear
     }
@@ -85,7 +98,10 @@ export default function DocumentRequirementsPage() {
   const refreshData = useCallback(() => {
     getSYData()
       .then(fetchData)
-      .catch(() => setLoading(false))
+      .catch((e) => {
+        console.log("ERROR?", e)
+        setLoading(false)
+      })
   }, [fetchData])
 
   useEffect(() => {

@@ -6,12 +6,12 @@ import { Modal } from "@app/components/modals";
 import { useSidebar } from "@app/components/sidebar";
 import Table, { TableColumnProps } from "@app/components/tables";
 import Toaster from "@app/components/toaster";
-import { ApplicationFormProps, ApplicationStatus, Roles, StudentModel, YearLevel } from '@app/types';
+import { ApplicationFormProps, ApplicationStatus, Roles, ScheduleModel, StudentModel, YearLevel } from '@app/types';
 import { CheckIcon, EyeIcon, PrinterIcon, XMarkIcon } from "@heroicons/react/16/solid";
 import clsx from 'clsx';
 import moment from "moment-timezone";
 import { Montserrat } from 'next/font/google';
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import { rejectApplicationForm } from "./action";
 
@@ -139,24 +139,55 @@ const montserrat = Montserrat({ subsets: ['latin'], weight: ['400', '700'] })
 export default function ApplicationListPage() {
   const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Admin })
   const [loading, setLoading] = useState<boolean>(true)
-  const [schoolYear, setSchoolYear] = useState<number>((moment.tz('Asia/Manila').toDate()).getFullYear())
+  const [schoolYear, setSchoolYear] = useState<number|string>((moment.tz('Asia/Manila').toDate()).getFullYear())
   const [data, setData] = useState<StudentModel[]>([])
-  const fetchAcademicYear = async () => {
-    const url = new URL('/api/schedule/now', window.location.origin)
+  const [schedData, setSchedData] = useState<ScheduleModel[]>([])
+
+  const getScheduleData = async () => {
+    setLoading(true)
+    const url = new URL('/api/schedule/data', window.location.origin)
     const response = await fetch(url)
-    let sy = (moment.tz('Asia/Manila').toDate()).getFullYear()
     if (response.ok) {
       const { data } = await response.json()
-      if (!!data) {
-        setSchoolYear(data.academicYear)
+      setSchedData(data)
+    }
+    setLoading(false)
+  }
+  const schoolYearList = useMemo<number[]>(() => {
+    let sylist: number[] = []
+    if (data.length > 0) {
+      const syList = schedData.map((item: ScheduleModel) => Number.parseInt(item.academicYear.toString()));
+      const minYear = Math.min(...syList, (new Date()).getFullYear());
+      const maxYear = Math.max(...syList, (new Date()).getFullYear());
+      sylist = Array.from({ length: maxYear - minYear + 1 }).map((_, i: number) => {
+        return (minYear - 1) + (i+1)
+      });
+      if (sylist.length > 0) {
+        if(sylist[sylist.length - 1] === (new Date()).getFullYear()) {
+          sylist.push((new Date()).getFullYear() + 1)
+        }
+        if(sylist[sylist.length - 1] < (new Date()).getFullYear()) {
+          for (let ii = maxYear + 1; ii <= (new Date()).getFullYear() + 1; ii++) {
+            sylist.push(ii);
+          }
+        }
       }
     }
-    return sy
-  }
-  const fetchData = async (sy: number) => {
+    // const thisYear: number = moment.tz('Asia/Manila').toDate().getFullYear();
+    // if (!sylist.includes(thisYear)) {
+    //   sylist.unshift(thisYear);
+    // }
+    // sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
+    if (sylist.length === 0) {
+      sylist = [(new Date()).getFullYear(), (new Date()).getFullYear() + 1]
+    }
+    return sylist
+  }, [schedData])
+
+  const fetchData = useCallback(async () => {
     setLoading(true)
     const url = new URL('/api/scholarship/applications', window.location.origin)
-    url.searchParams.append('academicYear', sy.toString())
+    url.searchParams.append('academicYear', schoolYear.toString())
     url.searchParams.append('application', 'applicant')
     const response = await fetch(url)
     if (response.ok) {
@@ -165,12 +196,16 @@ export default function ApplicationListPage() {
       setData(d);
     }
     setLoading(false);
-  }
+  }, [schoolYear])
+
 
   useEffect(() => {
-    fetchAcademicYear()
-      .then((sy) => fetchData(sy))
+    getScheduleData().catch(console.log)
   }, [])
+
+  useEffect(() => {
+    fetchData().catch(console.log)
+  }, [schoolYear])
 
   const [openViewModal, setOpenViewModal] = useState<(StudentModel & ApplicationFormProps & { age: number, studId: string })|undefined>()
   const onCloseViewModal = () => {
@@ -249,7 +284,15 @@ export default function ApplicationListPage() {
   return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
-        SCHOLARSHIP APPLICATIONS (A.Y. {schoolYear} - {schoolYear + 1})
+        SCHOLARSHIP APPLICATIONS (A.Y. {schoolYear} - {Number.parseInt(schoolYear.toString()) + 1})
+      </div>
+      <div className="mb-4">
+        <label htmlFor="schoolYear" className="font-[500] text-[15px] mb-2 mr-2">Select Academic Year:</label>
+        <select id="schoolYear" title="Academic Year" value={schoolYear} onChange={(e) => setSchoolYear(e.target.value)} className="py-1 px-2 bg-white rounded text-center border border-black">
+          {schoolYearList.map((sy: number) => (
+            <option key={sy} value={sy}>A.Y. {sy} - {sy + 1}</option>
+          ))}
+        </select>
       </div>
       { loading && <LoadingSpinnerFull />}
       <Table columns={columns(onView)} data={data} searchable toolbars={[
