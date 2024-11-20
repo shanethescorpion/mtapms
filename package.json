@@ -1,0 +1,35 @@
+{
+  "name": "mtapms",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --experimental-https",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.1.5",
+    "apexcharts": "^3.54.1",
+    "clsx": "^2.1.1",
+    "jose": "^5.6.3",
+    "moment-timezone": "^0.5.45",
+    "mongoose": "^8.5.2",
+    "next": "^14.2.17",
+    "react": "^18",
+    "react-apexcharts": "^1.5.0",
+    "react-dom": "^18",
+    "sweetalert2": "^11.6.13",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
