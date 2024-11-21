@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
             submittedDocuments: `${(await Promise.all(student.applicationSubmission.map(async (submission: any) => ({
               ...submission,
               requirementId: (await Requirement.findById(submission.requirementId).lean<RequirementModel>().exec())
-            })))).filter((submission: any) => (submission.requirementId as RequirementModel).scheduleId?.toString() === schedule._id?.toString() && submission.status === SubmissionStatus.Approved).length} / ${await Requirement.find({ scheduleId, forFirstYearOnly: student.applicationForm?.yearLevel == YearLevel.FirstYear }).countDocuments().exec()}`
+            })))).filter((submission: any) => (submission.requirementId as RequirementModel)?.scheduleId?.toString() === schedule._id?.toString() && submission.status === SubmissionStatus.Approved).length} / ${await Requirement.find({ scheduleId, forFirstYearOnly: student.applicationForm?.yearLevel == YearLevel.FirstYear }).countDocuments().exec()}`
           })))
           const results2 = results.map((result: any) => ({
             ...result,
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
               submittedDocuments: `${(await Promise.all(student.applicationSubmission.map(async (submission: any) => ({
                 ...submission,
                 requirementId: (await Requirement.findById(submission.requirementId).lean<RequirementModel>().exec())
-              })))).filter((submission: any) => (submission.requirementId as RequirementModel).scheduleId?.toString() === schedule._id?.toString() && submission.status === SubmissionStatus.Approved).length} / ${await Requirement.find({ scheduleId, forFirstYearOnly: student.applicationForm?.yearLevel == YearLevel.FirstYear }).countDocuments().exec()}`
+              })))).filter((submission: any) => (submission.requirementId as RequirementModel)?.scheduleId?.toString() === schedule._id?.toString() && submission.status === SubmissionStatus.Approved).length} / ${await Requirement.find({ scheduleId, forFirstYearOnly: student.applicationForm?.yearLevel == YearLevel.FirstYear }).countDocuments().exec()}`
             }
             const result2 = {
               ...result,

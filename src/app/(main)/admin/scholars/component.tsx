@@ -294,8 +294,8 @@ export default function ScholarListPage() {
     url1.searchParams.append('type', 'new')
     const response1 = await fetch(url1)
     if (response1.ok) {
-      const { data } = await response1.json()
-      const d = data.reduce((init: any[], item: StudentModel) => [...init, ({
+      const { data: dd } = await response1.json()
+      const d = dd.reduce((init: any[], item: StudentModel) => [...init, ({
         ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
         sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
         nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
@@ -310,8 +310,9 @@ export default function ScholarListPage() {
     url2.searchParams.append('type', 'new_firstYear')
     const response2 = await fetch(url2)
     if (response2.ok) {
-      const { data } = await response2.json()
-      const d = data.reduce((init: any[], item: StudentModel) => [...init, ({
+      const { data: dd } = await response2.json()
+      console.log(dd)
+      const d = dd.reduce((init: any[], item: StudentModel) => [...init, ({
         ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
         sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
         nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
@@ -326,8 +327,8 @@ export default function ScholarListPage() {
     url3.searchParams.append('type', 'grantee')
     const response3 = await fetch(url3)
     if (response3.ok) {
-      const { data } = await response3.json()
-      const d = data.reduce((init: any[], item: StudentModel) => [...init, ({
+      const { data: dd } = await response3.json()
+      const d = dd.reduce((init: any[], item: StudentModel) => [...init, ({
         ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
         sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
         nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
