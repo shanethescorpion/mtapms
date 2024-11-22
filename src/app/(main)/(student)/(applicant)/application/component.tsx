@@ -4,7 +4,7 @@ import Buttons from "@app/components/buttons";
 import { LoadingFull, LoadingSpinnerFull } from "@app/components/loadings";
 import Toaster from "@app/components/toaster";
 import { useSession } from "@app/lib/useSession";
-import { ApplicationFormProps, ApplicationStatus, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
+import { ApplicationFormProps, ApplicationStatus, CivilStatus, Courses, Gender, NameOfSchoolAttended, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
 import { PrinterIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -209,7 +209,12 @@ export default function ApplicationComponent() {
             </div>
             <div>
               <label htmlFor="nameOfSchoolAttended" className="font-[500]">Name of School Attended:</label>
-              <input type="text" id="nameOfSchoolAttended" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.nameOfSchoolAttended} onChange={(e) => setFormData({...formData, nameOfSchoolAttended: e.target.value })} />
+              {/* <input type="text" id="nameOfSchoolAttended" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.nameOfSchoolAttended} onChange={(e) => setFormData({...formData, nameOfSchoolAttended: e.target.value })} /> */}
+              <select id="nameOfSchoolAttended" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.nameOfSchoolAttended} onChange={(e) => setFormData({...formData, nameOfSchoolAttended: e.target.value as NameOfSchoolAttended })} required>
+                {Object.values(NameOfSchoolAttended).map((value: string) => (
+                  <option key={value} value={value}>{value}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label htmlFor="schoolAddress" className="font-[500]">School Address:</label>
@@ -233,7 +238,12 @@ export default function ApplicationComponent() {
             </div>
             <div>
               <label htmlFor="course" className="font-[500]">Course:</label>
-              <input type="text" id="course" name="course" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.course} onChange={(e) => setFormData({...formData, course: e.target.value })} required />
+              {/* <input type="text" id="course" name="course" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.course} onChange={(e) => setFormData({...formData, course: e.target.value })} required /> */}
+              <select id="course" name="course" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.course} onChange={(e) => setFormData({...formData, course: e.target.value as Courses })} required>
+                {Object.values(Courses).map((value: string) => (
+                  <option key={value} value={value}>{value}</option>
+                ))}
+              </select>
             </div>
             {formData.yearLevel > 1 && (
               <div>
