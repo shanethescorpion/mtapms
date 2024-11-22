@@ -149,13 +149,14 @@ export default function ApplicationListPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
+      console.log("DATA:", data)
       setSchedData(data)
     }
     setLoading(false)
   }
   const schoolYearList = useMemo<number[]>(() => {
     let sylist: number[] = []
-    if (data.length > 0) {
+    if (schedData.length > 0) {
       const syList = schedData.map((item: ScheduleModel) => Number.parseInt(item.academicYear.toString()));
       const minYear = Math.min(...syList, (new Date()).getFullYear());
       const maxYear = Math.max(...syList, (new Date()).getFullYear());

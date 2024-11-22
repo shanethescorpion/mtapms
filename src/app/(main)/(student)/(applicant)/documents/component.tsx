@@ -76,6 +76,7 @@ export default function DocumentRequirementsPage() {
       const url = new URL('/api/scholarship/requirements', window.location.origin)
       url.searchParams.append('academicYear', schoolYear?.toString() || sy.toString())
       url.searchParams.append('firstYearOnly', student?.yearLevel == YearLevel.FirstYear ? "true" : "false")
+      console.log(url.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data: req } = await response.json()
