@@ -7,6 +7,7 @@ type SearchParamProps = {
     template: string,
     studentId: string,
     academicYear: string,
+    school: string,
   }
 }
 

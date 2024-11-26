@@ -9,6 +9,7 @@ import Tabs from "@app/components/tabs"
 import Toaster from '@app/components/toaster'
 import {
   GranteeModel,
+  NameOfSchoolAttended,
   RequirementModel,
   RequirementSubmissionModel,
   Roles,
@@ -233,6 +234,7 @@ export default function ScholarListPage() {
   const [dataApplicant, setDataApplicant] = useState<StudentModel[]>([])
   const [dataApplicant1stYear, setDataApplicant1stYear] = useState<StudentModel[]>([])
   const [dataGrantee, setDataGrantee] = useState<StudentModel[]>([])
+  const [schoolFilter, setSchoolFilter] = useState<NameOfSchoolAttended|"">("")
   const [selected, setSelected] = useState<{
     student: StudentModel;
     id: string;
@@ -241,6 +243,17 @@ export default function ScholarListPage() {
     name: string;
     data: RequirementSubmissionModel|SubmissionProps
   }|undefined>()
+  
+  const onSchoolFilter = useCallback((e: any) => {
+    setSchoolFilter(e.target.value)
+  }, [])
+
+  const granteeListWithFilter = useMemo(() => {
+    if (!!schoolFilter) {
+      return dataGrantee.filter((fd: StudentModel) => fd.applicationForm?.nameOfSchoolAttended?.toLocaleLowerCase() === schoolFilter.toLocaleLowerCase())
+    }
+    return dataGrantee
+  }, [schoolFilter, dataGrantee])
 
   const onModalClose = useCallback(() => {
     setSelected(undefined)
@@ -474,9 +487,15 @@ export default function ScholarListPage() {
               <LoadingSpinnerFull/>
             )}
             {granteeColumns.length > 0 && (
-              <Table columns={granteeColumns} loading={loading} data={dataGrantee} searchable toolbars={[
-                <div key="print-all-grantees">
-                  <button type="button" className="px-2 py-1 bg-green-50 rounded border border-green-500" onClick={() => window.open(`/print?template=grantees-list&academicYear=${schoolYear}`)}> Print</button>
+              <Table columns={granteeColumns} loading={loading} data={granteeListWithFilter} searchable toolbars={[
+                <div key="print-all-grantees" className="h-full">
+                  <select value={schoolFilter} onChange={onSchoolFilter} className="px-2 py-1 rounded border">
+                    <option value="">Filter By School</option>
+                    {Object.values(NameOfSchoolAttended).map((nsa: string) => (
+                      <option key={nsa + "filter"} value={nsa}>{nsa}</option>
+                    ))}
+                  </select>
+                  <button type="button" className="inline ml-4 px-2 py-1 bg-green-50 rounded border border-green-500" onClick={() => window.open(`/print?template=grantees-list&academicYear=${schoolYear}` + (!!schoolFilter ? `&school=${schoolFilter}` : ""))}> Print</button>
                 </div>,
               ]} />
             )}

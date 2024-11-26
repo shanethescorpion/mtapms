@@ -41,10 +41,12 @@ export async function fetchPrintData(template: string, { ...args }: any) {
   if (template === "grantees-list") {
     const academicYear = parseInt(args.academicYear as string) || (moment.tz('Asia/Manila').toDate()).getFullYear()
     const sched = await Schedule.findOne({ academicYear }).lean<ScheduleModel>().exec();
-    const grantees = await Student.find({ isGrantee: true, 'applicationForm.scheduleId': sched?._id?.toString() }).select('-applicationSubmission -password -emailVerified').lean<StudentModel>().exec();
+    const filterBySchool = !!args.school ? {"applicationForm.nameOfSchoolAttended" : args.school } : {};
+    const grantees = await Student.find({ isGrantee: true, 'applicationForm.scheduleId': sched?._id?.toString(), ...filterBySchool }).select('-applicationSubmission -password -emailVerified').lean<StudentModel>().exec();
     const oldGrantees = await Student.find({
       isGrantee: true,
-      'applicationForm.scheduleId': { $ne: sched?._id?.toString() }
+      'applicationForm.scheduleId': { $ne: sched?._id?.toString() },
+      ...filterBySchool
     })
       .select('-applicationSubmission -password -emailVerified')
       .lean<StudentModel>()

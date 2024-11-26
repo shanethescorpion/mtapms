@@ -204,12 +204,12 @@ export default function Print({ template, data, viewOnly = false, ...props }: { 
       <table className="border-collapse w-full">
         <thead>
           <tr>
-            <th colSpan={3} className="text-center text-[14pt] border-t border-x border-black">
+            <th colSpan={4} className="text-center text-[14pt] border-t border-x border-black">
               LIST OF {Array.isArray(listData.applicants) ? "APPLICANTS" : "RECIPIENTS"} OF THE LGU SCHOLARSHIP PROGRAM
             </th>
           </tr>
           <tr>
-            <th colSpan={3} className="text-center text-[14pt] border-b border-x border-black">
+            <th colSpan={4} className="text-center text-[14pt] border-b border-x border-black">
               {listData.academicYear}
             </th>
           </tr>
@@ -223,6 +223,9 @@ export default function Print({ template, data, viewOnly = false, ...props }: { 
             <th className="border border-black text-left px-1">
               ADDRESS
             </th>
+            <th className="border border-black text-left px-1">
+              SCHOOL
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -231,17 +234,19 @@ export default function Print({ template, data, viewOnly = false, ...props }: { 
               <td className="text-right min-w-[15px] border border-black px-1">{n+1}</td>
               <td className="border border-black px-1 capitalize">{stud.applicationForm?.lastName}, {stud.applicationForm?.firstName} {stud.applicationForm?.middleName ? stud.applicationForm?.middleName[0] + "." : ""}</td>
               <td className="border border-black px-1 capitalize">{stud.applicationForm?.presentAddress || stud.applicationForm?.permanentAddress}</td>
+              <td className="border border-black px-1 capitalize">{stud.applicationForm?.nameOfSchoolAttended || stud.applicationForm?.nameOfSchoolAttended}</td>
             </tr>
           ))}
           {Array.isArray(listData.grantees) && [{_id: "new-grantees", category: "New Grantees" }, ...listData.grantees]?.map((stud: StudentModel|{_id: string, category: string}, n: number) => (
             <tr key={stud._id}>
               {!!(stud as any).category ? (
-                <th className="text-left border border-black px-1" colSpan={3}>{(stud as any).category}</th>
+                <th className="text-left border border-black px-1" colSpan={4}>{(stud as any).category}</th>
               ) : (
               <>
                 <td className="text-right min-w-[15px] border border-black px-1">{n}</td>
                 <td className="border border-black px-1 capitalize">{(stud as StudentModel).applicationForm?.lastName}, {(stud as any).applicationForm?.firstName} {(stud as StudentModel).applicationForm?.middleName ? (stud as any).applicationForm.middleName[0] + "." : ""}</td>
                 <td className="border border-black px-1 capitalize">{(stud as any).applicationForm?.presentAddress || (stud as any).applicationForm?.permanentAddress}</td>
+                <td className="border border-black px-1 capitalize">{(stud as any).applicationForm?.nameOfSchoolAttended || (stud as any).applicationForm?.nameOfSchoolAttended}</td>
               </>
               )}
             </tr>
@@ -249,12 +254,13 @@ export default function Print({ template, data, viewOnly = false, ...props }: { 
           {Array.isArray(listData.oldGrantees) && [{_id: "old-grantees", category: "Old Grantees" }, ...listData.oldGrantees]?.map((stud: StudentModel|{_id: string, category: string}, n: number) => (
             <tr key={stud._id}>
               {!!(stud as any).category ? (
-                <th className="text-left border border-black px-1" colSpan={3}>{(stud as any).category}</th>
+                <th className="text-left border border-black px-1" colSpan={4}>{(stud as any).category}</th>
               ) : (
               <>
                 <td className="text-right min-w-[15px] border border-black px-1">{n}</td>
                 <td className="border border-black px-1 capitalize">{(stud as StudentModel).applicationForm?.lastName}, {(stud as any).applicationForm?.firstName} {(stud as StudentModel).applicationForm?.middleName ? (stud as any).applicationForm.middleName[0] + "." : ""}</td>
                 <td className="border border-black px-1 capitalize">{(stud as any).applicationForm?.presentAddress || (stud as any).applicationForm?.permanentAddress}</td>
+                <td className="border border-black px-1 capitalize">{(stud as any).applicationForm?.nameOfSchoolAttended || (stud as any).applicationForm?.nameOfSchoolAttended}</td>
               </>
               )}
             </tr>
