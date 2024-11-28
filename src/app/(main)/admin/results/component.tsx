@@ -92,6 +92,17 @@ const columns = (onDecideGrant: (rowData: any) => void): TableColumnProps[] => (
     searchable: true
   },
   {
+    label: 'Orientation',
+    field: 'orientation',
+    sortable: true,
+    align: 'center',
+    render(rowData: any) {
+      return rowData.orientation
+        ? 'Yes'
+        : 'No'
+    }
+  },
+  {
     label: 'Orientation (10%)',
     field: 'orientationPercentage',
     sortable: true,
@@ -102,14 +113,12 @@ const columns = (onDecideGrant: (rowData: any) => void): TableColumnProps[] => (
     }
   },
   {
-    label: 'Orientation',
-    field: 'orientation',
+    label: 'Examination',
+    field: 'exam',
     sortable: true,
     align: 'center',
     render(rowData: any) {
-      return rowData.orientation
-        ? 'Yes'
-        : 'No'
+      return rowData.exam.toString() !== 'N/A' ? rowData.exam.toString() + '%' : 'N/A'
     }
   },
   {
@@ -123,13 +132,10 @@ const columns = (onDecideGrant: (rowData: any) => void): TableColumnProps[] => (
     }
   },
   {
-    label: 'Examination',
-    field: 'exam',
+    label: 'Submitted Documents',
+    field: 'submittedDocuments',
     sortable: true,
     align: 'center',
-    render(rowData: any) {
-      return rowData.exam.toString() !== 'N/A' ? rowData.exam.toString() + '%' : 'N/A'
-    }
   },
   {
     label: 'Submitted Documents (50%)',
@@ -140,12 +146,6 @@ const columns = (onDecideGrant: (rowData: any) => void): TableColumnProps[] => (
     render(rowData: any) {
       return `${rowData.submittedDocumentsPercentage} %`
     }
-  },
-  {
-    label: 'Submitted Documents',
-    field: 'submittedDocuments',
-    sortable: true,
-    align: 'center',
   },
   {
     label: 'Application Form Status',
