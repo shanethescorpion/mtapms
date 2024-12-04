@@ -165,7 +165,7 @@ const columns = (onDecideGrant: (rowData: any) => void): TableColumnProps[] => (
     align: 'center',
     render(rowData: any) {
       return rowData.overallPercentage > 75
-      ? <button type="button" onClick={() => !rowData.grantee && onDecideGrant(rowData)} className="font-bold text-green-700 px-2 py-1 rounded-lg bg-green-50 border shadow shadow-green-100 hover:bg-green-100">{rowData.overallPercentage} %</button>
+      ? <span className="font-bold text-green-700 px-2 py-1 rounded-lg bg-green-50 border shadow shadow-green-100 hover:bg-green-100">{rowData.overallPercentage} %</span>
       : <span className="font-bold text-red-600">{rowData.overallPercentage} %</span>
     }
   },
@@ -176,7 +176,9 @@ const columns = (onDecideGrant: (rowData: any) => void): TableColumnProps[] => (
     searchable: true,
     align: 'center',
     render(rowData: any) {
-      return <span className={clsx("font-bold", rowData.grantee ? 'text-green-600' : 'text-gray-500')}>{rowData.grantee ? 'Yes' : 'No'}</span>
+      return rowData.overallPercentage > 75 && !rowData.grantee
+        ? <button type="button" onClick={() => !rowData.grantee && onDecideGrant(rowData)}>No</button> 
+        : <span className={clsx("font-bold", rowData.grantee ? 'text-green-600' : 'text-gray-500')}>{rowData.grantee ? 'Yes' : 'No'}</span>
     }
   },
 ] as TableColumnProps[])

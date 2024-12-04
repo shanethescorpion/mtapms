@@ -107,6 +107,10 @@ const sidebarLinks = {
       href: "/admin/results",
     },
     {
+      label: "Courses Management",
+      href: "/admin/courses",
+    },
+    {
       label: "My Profile",
       href: "/admin/profile",
     },

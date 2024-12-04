@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
         const student = await Student.findById(studentId).select('isGrantee email applicationForm studentId').exec()
-        if (!!student && student.applicationForm.scheduleId.toString() === schedule._id.toString()) {
+        if (!!student && student.applicationForm?.scheduleId.toString() === schedule._id.toString()) {
           return NextResponse.json({ data: student.applicationForm })
         }
       }

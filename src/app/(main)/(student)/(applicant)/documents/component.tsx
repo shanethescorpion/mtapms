@@ -20,6 +20,7 @@ import moment from "moment-timezone";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { uploadSubmission } from "./action";
+import { DataPrivacyAct } from "@app/components/dataprivacy";
 
 export default function DocumentRequirementsPage() {
   const { data: sessionData, status } = useSession({ redirect: false })
@@ -31,6 +32,8 @@ export default function DocumentRequirementsPage() {
 
   const schoolYear = useMemo<number|string|undefined>(() => syData?.academicYear, [syData])
   const [requirements, setRequirements] = useState<RequirementModel[]>([]);
+  const [showDataPrivacy, setShowDataPrivacy] = useState<boolean>(false);
+  const [checkDataPrivacy, setCheckDataPrivacy] = useState<boolean>(false);
 
   const getSYData = async () => {
     setLoading(true)
@@ -76,7 +79,6 @@ export default function DocumentRequirementsPage() {
       const url = new URL('/api/scholarship/requirements', window.location.origin)
       url.searchParams.append('academicYear', schoolYear?.toString() || sy.toString())
       url.searchParams.append('firstYearOnly', student?.yearLevel == YearLevel.FirstYear ? "true" : "false")
-      console.log(url.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data: req } = await response.json()
@@ -128,6 +130,7 @@ export default function DocumentRequirementsPage() {
 
   const onCloseModal = useCallback(() => {
     formRef.current?.reset();
+    setTimeout(() => setCheckDataPrivacy(false), 100)
     setTimeout(() => setSelectedRequirement(undefined), 100)
   }, [])
 
@@ -186,7 +189,11 @@ export default function DocumentRequirementsPage() {
             <label className="block mb-2 font-medium text-gray-900" htmlFor="file_input">Upload submission for <span className="font-bold">{selectedRequirement?.name}</span>:</label>
             <input className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" aria-describedby="file_input_help" id="file_input" type="file" accept=".png, .jpg, .jpeg" onChange={(e) => setFileSubmission(e.target.files?.[0])} />
             <p className="mt-1 text-sm text-gray-500 mb-4" id="file_input_help">PNG or JPG</p>
-            <button  type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
+            <div className="flex items-center justify-start gap-x-2 mb-4">
+              <input type="checkbox" id="data_privacy_checkbox" name="data_privacy" className="form-checkbox h-4 w-4 text-blue-600 cursor-pointer" checked={checkDataPrivacy} onChange={(e) => setCheckDataPrivacy(e.target.checked)} />
+              <label className="text-sm font-medium text-gray-900" htmlFor="data_privacy_checkbox">I agree with the <div className="cursor-pointer text-sky-500 hover:text-sky-400 hover:underline inline" onClick={() => setShowDataPrivacy(true)}>Data Privacy Policy.</div></label>
+            </div>
+            <button  type="submit" disabled={!checkDataPrivacy || !fileSubmission?.name} className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md disabled:bg-gray-400">
               Submit
             </button>
           </form>
@@ -229,6 +236,16 @@ export default function DocumentRequirementsPage() {
         )}
         <div className="p-2 flex justify-end items-center mt-2">
           <button type="button" title="Close" className="border border-gray-500 px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 font-[500]" onClick={onCloseModal}>Close</button>
+        </div>
+      </div>
+    </Modal>
+    <Modal title="Data Privacy Act" open={showDataPrivacy} onClose={() => setShowDataPrivacy(false)}>
+      <div className="p-4">
+        <div className="max-h-[calc(100vh-200px)] max-w-[1000px] relative overflow-auto p-4 border shadow">
+          <DataPrivacyAct />
+        </div>
+        <div className="p-2 flex justify-end items-center mt-2">
+          <button type="button" title="Close" className="border border-gray-500 px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 font-[500]" onClick={() => setShowDataPrivacy(false)}>Close</button>
         </div>
       </div>
     </Modal>

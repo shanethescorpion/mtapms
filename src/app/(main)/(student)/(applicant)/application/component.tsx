@@ -4,14 +4,96 @@ import Buttons from "@app/components/buttons";
 import { LoadingFull, LoadingSpinnerFull } from "@app/components/loadings";
 import Toaster from "@app/components/toaster";
 import { useSession } from "@app/lib/useSession";
-import { ApplicationFormProps, ApplicationStatus, CivilStatus, Courses, Gender, NameOfSchoolAttended, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
+import { ApplicationFormProps, ApplicationStatus, CivilStatus, Courses, CoursesModel, Gender, NameOfSchoolAttended, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
 import { PrinterIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ScholarshipApplicationAction } from "./action";
 
+
+
+export function InputList({
+  label,
+  name,
+  list = [],
+  value,
+  className,
+  placeholder,
+  onChange,
+  required = false,
+  disabled = false,
+}: {
+  label: string,
+  name: string,
+  list: { value: any, label: string }[],
+  value?: string,
+  className?: string,
+  placeholder?: string,
+  onChange?: (value: string) => void
+  required?: boolean
+  disabled?: boolean
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const filtered  = useMemo(() => list.filter((data) =>
+    data.label.toLowerCase().includes(value?.toLowerCase() || "")
+  ), [value]);
+
+  const handleSelect = useCallback((label: string) => {
+    onChange && onChange(label);
+    setIsOpen(false);
+  }, [onChange]);
+
+  return (
+    <div className={clsx("relative", className)}>
+      <label htmlFor={name} className="font-[500]">{label}</label>
+      <input
+        id={name}
+        type="text"
+        value={value}
+        onChange={(e) => {
+          onChange && onChange(e.target.value);
+          setIsOpen(true);
+        }}
+        onBlur={() => {
+          setTimeout(() => setIsOpen(false), 200);
+        }}
+        onFocus={() => setIsOpen(true)}
+        className="block border border-black px-2 py-1 rounded flex-grow w-full"
+        placeholder={placeholder}
+        disabled={disabled}
+        required={required}
+        autoSave="off"
+        autoComplete="off"
+        aria-autocomplete="none"
+      />
+
+      {/* Dropdown */}
+      {isOpen && (
+        <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg text-black">
+          {filtered.length > 0 ? (
+            filtered.map((data) => (
+              <div
+                key={data.value}
+                onClick={() => handleSelect(data.label)}
+                className="px-4 py-2 cursor-pointer hover:bg-blue-100"
+              >
+                {data.label}
+              </div>
+            ))
+          ) : (
+            <div className="px-4 py-2 text-gray-500">Nothing found</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 export default function ApplicationComponent() {
   const { data: sessionData, status } = useSession({ redirect: false });
+  const [courseList, setCourseList] = useState<CoursesModel[]>([])
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<ScheduleModel|true>()
   const fetchData = () => {
@@ -24,8 +106,16 @@ export default function ApplicationComponent() {
       .catch((e) => { console.log(e); setLoading(false); })
   }
 
+  const fetchCourses = () => {
+    fetch('/api/courses')
+     .then(response => response.json())
+     .then(({ data }) => { setCourseList(data); setLoading(false); })
+     .catch(error => { console.log(error); setLoading(false); });
+  }
+
   useEffect(() => {
     fetchData();
+    fetchCourses();
   }, [])
 
   const scheduleId = useMemo(() => data !== true ? data?._id || '' : '', [data])
@@ -207,15 +297,15 @@ export default function ApplicationComponent() {
               <label htmlFor="mobileNo" className="font-[500]">Mobile Number:</label>
               <input type="tel" id="mobileNo" name="mobileNo" className="block border border-black px-2 py-1 rounded flex-grow w-full" minLength={10} maxLength={13} value={formData.mobileNo} onChange={(e) => setFormData({...formData, mobileNo: e.target.value })} required />
             </div>
-            <div>
+            <InputList name="nameOfSchoolAttended" placeholder="Enter Name of School Attended" label="Name of School Attended:" list={Object.values(NameOfSchoolAttended).map((v: string) => ({ label: v, value: v }))} value={formData.nameOfSchoolAttended} onChange={(value) => setFormData({...formData, nameOfSchoolAttended: value as any })} required />
+            {/* <div>
               <label htmlFor="nameOfSchoolAttended" className="font-[500]">Name of School Attended:</label>
-              {/* <input type="text" id="nameOfSchoolAttended" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.nameOfSchoolAttended} onChange={(e) => setFormData({...formData, nameOfSchoolAttended: e.target.value })} /> */}
               <select id="nameOfSchoolAttended" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.nameOfSchoolAttended} onChange={(e) => setFormData({...formData, nameOfSchoolAttended: e.target.value as NameOfSchoolAttended })} required>
                 {Object.values(NameOfSchoolAttended).map((value: string) => (
                   <option key={value} value={value}>{value}</option>
                 ))}
               </select>
-            </div>
+            </div> */}
             <div>
               <label htmlFor="schoolAddress" className="font-[500]">School Address:</label>
               <input type="text" id="schoolAddress" name="schoolAddress" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolAddress} onChange={(e) => setFormData({...formData, schoolAddress: e.target.value })} />
@@ -236,15 +326,11 @@ export default function ApplicationComponent() {
                 <option value={4}>4th Year</option>
               </select>
             </div>
-            <div>
-              <label htmlFor="course" className="font-[500]">Course:</label>
+            <InputList name="course" placeholder="Enter your course" label="Course:" list={courseList.length === 0 ? Object.values(Courses).map((v: string) => ({ label: v, value: v })) : courseList.map((v: CoursesModel) => ({ label: v.name, value: v.name }))} value={formData.course} onChange={(value) => setFormData({...formData, course: value as any })} required />
+            {/* <div> */}
+              {/* <label htmlFor="course" className="font-[500]">Course:</label> */}
               {/* <input type="text" id="course" name="course" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.course} onChange={(e) => setFormData({...formData, course: e.target.value })} required /> */}
-              <select id="course" name="course" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.course} onChange={(e) => setFormData({...formData, course: e.target.value as Courses })} required>
-                {Object.values(Courses).map((value: string) => (
-                  <option key={value} value={value}>{value}</option>
-                ))}
-              </select>
-            </div>
+            {/* </div> */}
             {formData.yearLevel > 1 && (
               <div>
                 <label htmlFor="studentId" className="font-[500]">Student ID: (required)</label>

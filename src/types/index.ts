@@ -159,6 +159,11 @@ export enum ApplicationStatus {
   Rejected = "rejected"
 }
 
+export interface CoursesModel extends BaseDocument {
+  name: string,
+  createdBy: string|AdminModel
+}
+
 export interface ApplicationFormProps extends BaseDocument {
   scheduleId: string|ScheduleModel,
   applicationStatus: ApplicationStatus,
