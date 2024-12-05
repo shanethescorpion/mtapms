@@ -37,11 +37,6 @@ export default function SchedulePage() {
         }
       }
     }
-    // const thisYear: number = moment.tz('Asia/Manila').toDate().getFullYear();
-    // if (!sylist.includes(thisYear)) {
-    //   sylist.unshift(thisYear);
-    // }
-    // sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
     if (sylist.length === 0) {
       sylist = [(new Date()).getFullYear(), (new Date()).getFullYear() + 1]
     }
