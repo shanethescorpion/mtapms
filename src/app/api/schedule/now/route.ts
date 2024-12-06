@@ -16,12 +16,11 @@ export async function GET(request: NextRequest) {
       const action = request.nextUrl.searchParams.get('action')
       const selection = 'academicYear range orientationDate examDate interviewDate isProfileOpen' + (action === 'scheduleandresult' ? ' examScores' : '')
       const result = await Schedule.find({}).select(selection).lean<ScheduleModel[]>().exec()
-      result.sort((a, b) => b.academicYear - a.academicYear)
-      const dataRecent: ScheduleModel = result?.[0] || null
+      const now = moment.tz('Asia/Manila').toDate()
+      const dataRecent: ScheduleModel|null = result.find((sched) => (Number.parseInt(sched.academicYear?.toString()) === now.getFullYear() && moment(sched.range.startDate).tz('Asia/Manila').isBefore(now)) || (Number.parseInt(sched.academicYear?.toString()) === (now.getFullYear() + 1) && moment(sched.range.startDate).tz('Asia/Manila').toDate().getMonth() > now.getMonth())) || null
       if (!!dataRecent) {
         const recentStartDate = moment(dataRecent?.range.startDate).tz('Asia/Manila').toDate()
         const recentEndDate = moment(dataRecent?.range.endDate).tz('Asia/Manila').toDate()
-        const now = moment.tz('Asia/Manila').toDate()
         const data = !!dataRecent && (recentStartDate.getTime() <= now.getTime() && recentEndDate.getTime() >= now.getTime()) && dataRecent.isProfileOpen ? dataRecent : null
         if (!!data) {
           const student = await Student.findById(session.user._id).exec()

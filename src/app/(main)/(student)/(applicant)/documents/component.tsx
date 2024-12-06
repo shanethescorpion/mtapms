@@ -42,22 +42,29 @@ export default function DocumentRequirementsPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data: d } = await response.json()
-      if (!d || Number.parseInt(d.academicYear) > (new Date()).getFullYear()) {
-        const url2 = new URL('/api/schedule/selected', window.location.origin)
-        url2.searchParams.append('action', 'documents')
-        url2.searchParams.append("sy", (new Date()).getFullYear().toString())
-        const response2 = await fetch(url2)
-        if (response2.ok) {
-          const { data: dd } = await response2.json()
-          setSYData(dd)
-          setLoading(false)
-          return dd.academicYear
-        }
-      } else {
-        setSYData(d)
-      }
+      setSYData(d)
       setLoading(false)
-      return d.academicYear
+      return d.academicYear;
+      // console.log("schedule now", d) mao to siya ganina akong gi remove para maka submit
+      // irestore siguro
+      // aysa check ko muna
+      // // gi remove nako to ug try imong gibutang nga condition bitaw, maong naay submission to si tiempo, kay ug di nako to ihawa di man siya ka submit even naka fill up nas form
+      // if (!d || Number.parseInt(d.academicYear) > (new Date()).getFullYear()) {
+      //   const url2 = new URL('/api/schedule/selected', window.location.origin)
+      //   url2.searchParams.append('action', 'documents')
+      //   url2.searchParams.append("sy", (new Date()).getFullYear().toString())
+      //   const response2 = await fetch(url2)
+      //   if (response2.ok) {
+      //     const { data: dd } = await response2.json()
+      //     setSYData(dd)
+      //     setLoading(false)
+      //     return dd.academicYear
+      //   }
+      // } else {
+      //   setSYData(d)
+      // }
+      // setLoading(false)
+      // return d.academicYear
     }
     return ''
   }

@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
         if (!student) {
           return NextResponse.json({ data: [] })
         }
-        if (!student.applicationForm || !student.applicationForm.scheduleId?.toString() !== schedule?._id?.toString()) {
+        if (!student.applicationForm || student.applicationForm.scheduleId?.toString() !== schedule?._id?.toString()) {
           return NextResponse.json({ data: [] })
         }
       }

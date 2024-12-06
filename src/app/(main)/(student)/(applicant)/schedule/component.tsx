@@ -36,6 +36,7 @@ export default function ScheduleAndResultPage() {
     setLoading(true)
     const url = new URL('/api/schedule/now', window.location.origin)
     url.searchParams.append('action', 'scheduleandresult')
+    // kay naa namay 2025, ang 2025 iyang gipangita ani..
     const response = await fetch(url)
     if (response.ok) {
       const { data: d } = await response.json()
