@@ -139,7 +139,6 @@ export default function OrientationAttendancePage() {
     .then(fetchRefresh)
     .then(() => setLoading(false))
     .catch((e) => {console.log(e); setLoading(false)})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onCloseModal = useCallback(() => setSelectedAttendance(null), [])
@@ -170,7 +169,7 @@ export default function OrientationAttendancePage() {
   return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
-        SCHOLARSHIP APPLICATIONS (A.Y. {schoolYear} - {schoolYear + 1})
+        ORIENTATION ATTENDANCE (A.Y. {schoolYear} - {schoolYear + 1})
       </div>
       <div className="text-right">
         <button type="button" className="bg-green-700 hover:bg-green-600 text-white rounded-full px-4 py-2 mr-2 mb-2" onClick={fetchRefresh}>
