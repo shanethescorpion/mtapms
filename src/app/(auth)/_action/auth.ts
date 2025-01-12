@@ -25,7 +25,7 @@ async function adminLogin(employeeId?: string, password?: string): Promise<Respo
       }
     }
   }
-  const admin = await Admin.findOne({ employeeId }).select('password').lean().exec() as StudentModel;
+  const admin = await Admin.findOne({ employeeId }).select('password').lean().exec() as unknown as StudentModel;
   if (admin && (await compare(password, admin.password))) {
     const success = await createSession(Roles.Admin, admin._id!);
     let error = !success ? undefined : { login: 'Session failed. Please try again later or refresh page.' };
