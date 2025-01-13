@@ -37,7 +37,7 @@ export function InputList({
 
   const filtered  = useMemo(() => list.filter((data) =>
     data.label.toLowerCase().includes(value?.toLowerCase() || "")
-  ), [value]);
+  ), [value, list]);
 
   const handleSelect = useCallback((label: string) => {
     onChange && onChange(label);

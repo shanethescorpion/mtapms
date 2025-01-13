@@ -139,6 +139,7 @@ export default function OrientationAttendancePage() {
     .then(fetchRefresh)
     .then(() => setLoading(false))
     .catch((e) => {console.log(e); setLoading(false)})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onCloseModal = useCallback(() => setSelectedAttendance(null), [])

@@ -206,6 +206,7 @@ export default function ApplicationListPage() {
 
   useEffect(() => {
     fetchData().catch(console.log)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [schoolYear])
 
   const [openViewModal, setOpenViewModal] = useState<(StudentModel & ApplicationFormProps & { age: number, studId: string })|undefined>()
