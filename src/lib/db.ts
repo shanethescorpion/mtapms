@@ -43,8 +43,8 @@ export default async function mongodbConnect() {
     connection.isConnected = db.connections[0].readyState === 1
   }
   if (connection.isConnected) {
-    console.log("db connected")
+    console.log("db connected to " + MONGODB_URI)
   } else {
-    console.log("db not connected")
+    console.log("db not connected to " + MONGODB_URI)
   }
 }
